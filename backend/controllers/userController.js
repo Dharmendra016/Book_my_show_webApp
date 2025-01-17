@@ -1,141 +1,47 @@
-
-// --> testing not implement 
-
-import "dotenv/config"
-import User from "../models/userSchema"
-import otpGenerator from "otp-generator"
-import { Otp } from "../models/otp";
-import { createHmac } from "node:crypto"
-import { getJwtToken } from "../utility/jwt";
+import "dotenv/config";
+import { initializeUserTable, insertUser } from "../models/userSchema.js";
+import { createHmac, hash } from "node:crypto"
+import { getJwtToken } from "../utility/jwt.js";
+import { client } from "../utility/dbConnect.js";
 
 const secret = process.env.HASH_SECRET
-
-export const sendOtp = async (req, res) => {
-    try {
-
-        const { email } = req.body;
-
-        if (!email) {
-            return res.status(400).json({
-                success: false,
-                message: "Please Enter you email"
-            })
-            
-        }
-
-        var otp = otpGenerator.generate(6, {
-            digits: true,
-            lowerCaseAlphabets: false,
-            upperCaseAlphabets: false,
-            specialChars: false
-        })
-
-        var isOtpUnique = await Otp.findOne({ otp });
-
-        while (isOtpUnique) {
-            otp = otpGenerator.generate(5, {
-                digits: true,
-                upperCaseAlphabets: false,
-                specialChars: false,
-                lowerCaseAlphabets: false
-            });
-            isOtpUnique = await Otp.findOne({ otp });
-        }
-
-        await Otp.create({
-            email,
-            otp,
-        })
-
-        return res.status(200).json({
-            success: true,
-            message: "Successively created otp",
-        })
-
-
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export const verifyOtp = async (req, res) => {
-
-    try {
-
-        const { otp, email } = req.body;
-
-        if (!otp || !email) {
-            return res.status(400).json({
-                success: false,
-                message: "Please provide otp."
-            })
-        }
-
-        const updatedOtp = await Otp.find({ email }).sort({ createdAt: -1 }).limit(1);
-
-        if (updatedOtp[0].otp !== otp) {
-            return res.status(400).json({
-                success: false,
-                message: "OTP not matched"
-            })
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Correct OTP",
-            user: {
-                email,
-            }
-        })
-
-
-
-    } catch (error) {
-        console.log(error);
-    }
-
-}
-
+const searchQuery = `SELECT * FROM "User" WHERE Email LIKE $1`;
 
 export const registerUser = async (req, res) => {
     try {
-        const { username, email, password, confirmPassword } = req.body;
+        await initializeUserTable();
+        const { Name, Email, Password, PhoneNo, Role } = req.body;
+        console.log(Name , Email , Password , PhoneNo , Role);
 
-        if (!email || !username || !password || !confirmPassword) {
+        if (!Email || !Name || !Password || !PhoneNo || !Role) {
             res.status(400).json({
                 success: false,
                 message: "All field are required."
             })
             return
         }
+        
+        const user = await client.query(searchQuery, [Email]);
 
-        const user = await User.findOne({ email });
-        if (user) {
+        if (user.rows.length > 0) {
             res.status(400).json({
                 success: false,
                 message: "User already registered."
-            })
-            return
+            });
+            return;
         }
 
-        if (password !== confirmPassword) {
-            res.status(400).json({
-                success: false,
-                message: "Passowrd doesn't match."
-            })
-            return
-        }
         const hashedPassword = createHmac('sha256', secret)
-            .update(password)
+            .update(Password)
             .digest('hex');
 
-        const userCreated = await User.create({ username, email, password: hashedPassword, confirmPassword: hashedPassword });
+        const userCreated = await insertUser({ Name, Email, Password: hashedPassword, PhoneNo, Role });
 
         if (!userCreated) {
-            return res.status(200).json({
+            return res.status(500).json({
                 success: false,
-                message: "user not created",
-            })
+                message: "User not created due to a server issue.",
+            });
         }
 
         return res.status(200).json({
@@ -157,28 +63,32 @@ export const loginUser = async (req, res) => {
 
     try {
 
-        const { email, password } = req.body;
+        const { Email, Password } = req.body;
 
-        if (!email || !password) {
+        if (!Email || !Password) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required to be filled",
             })
         }
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({
+        const result = await client.query(searchQuery, [Email]);
+
+        if (result.rows.length === 0) {
+            res.status(400).json({
                 success: false,
-                message: "user not found"
+                message: "User Not found"
             });
+            return;
         }
+        const user = result.rows[0];
 
         const hashedPassword = createHmac('sha256', secret)
-            .update(password)
+            .update(Password)
             .digest('hex');
 
-        if (hashedPassword !== user?.password) {
+
+        if (hashedPassword !== user.password) {
             return res.status(403).json({
                 success: false,
                 message: "password not matched",
@@ -186,13 +96,13 @@ export const loginUser = async (req, res) => {
         }
 
         const userData = {
-            _id:user?._id,
-            username: user?.username,
-            email: user?.email,
-            profilePic: user?.profilePic
+            UserId:user.UserId,
+            Name: user.Name,
+            Email: user.Email,
+            Role:user.Role
         }
+
         const token = getJwtToken(userData);
-        console.log("token: ", token);
 
         return res.cookie('token', token, {
             httpOnly: true,
@@ -200,7 +110,7 @@ export const loginUser = async (req, res) => {
             maxAge: 60 * 60 * 1000,
         }).json({
             success: true,
-            message: `Welcome back ${user?.username}`
+            message: `Welcome back ${user?.name}`
         });
 
 
@@ -215,7 +125,7 @@ export const loginUser = async (req, res) => {
 }
 
 export const logout = async (req, res)=> {
-    try {            
+    try {
 
         return res.cookie("token", "", { maxAge: 0 })
         .cookie("connect.sid","",{maxAge:0}).json({

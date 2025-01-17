@@ -13,7 +13,7 @@ const client = new Client({
 
 const dbConnection = async () => {
     try {
-        console.log("Hello");
+       
         await client.connect();
         
         console.log("successfully connection to database !!");
@@ -24,4 +24,4 @@ const dbConnection = async () => {
     }
 }
 
-export default dbConnection; 
+export {dbConnection,client}; 

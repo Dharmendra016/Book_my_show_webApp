@@ -1,7 +1,4 @@
-
-// --> testing not implement 
-
-import { getJwtVerified } from "../utility/jwt";
+import { getJwtVerified } from "../utility/jwt.js";
 
 export const authentication = async (req, res , next) => {
 

@@ -2,7 +2,9 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import dbConnection from "./utility/dbConnect.js"
+import {dbConnection} from "./utility/dbConnect.js"
+import userRoutes from "./routes/userRoutes.js"
+import { authentication } from "./middlewares/auth.js";
  
 const app = express();
 
@@ -16,7 +18,12 @@ app.use(cookieParser());
 //db connectio 
 dbConnection()
 
-app.get("/", (req, res) => {
+
+//api
+app.use("/",userRoutes);
+
+
+app.get("/", authentication,(req, res) => {
   res.send("Hello world");
 });
 
