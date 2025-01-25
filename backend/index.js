@@ -2,10 +2,11 @@ import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import {dbConnection} from "./utility/dbConnect.js"
+// import {dbConnection} from "./utility/dbConnect.js"
 import userRoutes from "./routes/userRoutes.js"
 import { authentication } from "./middlewares/auth.js";
 import eventRoutes from "./routes/eventRoutes.js"
+import sql from "./utility/supabase.js";
  
 const app = express();
 
@@ -17,7 +18,8 @@ app.use(cookieParser());
 
 
 //db connectio 
-dbConnection()
+// dbConnection()
+sql
 
 
 //api
