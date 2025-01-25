@@ -96,14 +96,14 @@ export const loginUser = async (req, res) => {
         }
 
         const userData = {
-            UserId:user.UserId,
-            Name: user.Name,
-            Email: user.Email,
-            Role:user.Role
+            UserId:user.userid,
+            Name: user.name,
+            Email: user.email,
+            Role:user.role
         }
 
         const token = getJwtToken(userData);
-
+        
         return res.cookie('token', token, {
             httpOnly: true,
             sameSite: "strict",

@@ -6,7 +6,7 @@ const secret = process.env.JWT_SECRET;
 
 export const getJwtToken = (data) => {
     try {
-        
+        console.log("data",data);
         return jwt.sign(data, secret , { expiresIn: 60 * 60 });
 
     } catch (error) {

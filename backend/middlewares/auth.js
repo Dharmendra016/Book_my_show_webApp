@@ -12,7 +12,6 @@ export const authentication = async (req, res , next) => {
         }
        
         const user = getJwtVerified(token);
-
         if( !user ){
             return res.status(401).json({
                 success:false,

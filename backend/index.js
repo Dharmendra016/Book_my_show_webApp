@@ -5,6 +5,7 @@ import cors from "cors";
 import {dbConnection} from "./utility/dbConnect.js"
 import userRoutes from "./routes/userRoutes.js"
 import { authentication } from "./middlewares/auth.js";
+import eventRoutes from "./routes/eventRoutes.js"
  
 const app = express();
 
@@ -21,6 +22,7 @@ dbConnection()
 
 //api
 app.use("/",userRoutes);
+app.use("/",eventRoutes);
 
 
 app.get("/", authentication,(req, res) => {
