@@ -2,7 +2,7 @@ import { client } from "../utility/dbConnect.js";
 
 
 const userModel = `
-    CREATE TYPE role_enum AS ENUM ('admin', 'user', 'moderator');
+    CREATE TYPE role_enum AS ENUM ('admin', 'user');
 
     CREATE TABLE IF NOT EXISTS "User"(
         UserId SERIAL PRIMARY KEY,

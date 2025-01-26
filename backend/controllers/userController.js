@@ -5,15 +5,16 @@ import { getJwtToken } from "../utility/jwt.js";
 import { client } from "../utility/dbConnect.js";
 
 const secret = process.env.HASH_SECRET
-const searchQuery = `SELECT * FROM "User" WHERE Email LIKE $1`;
+const searchQuery = `SELECT * FROM "User" WHERE email LIKE $1`;
 
 export const registerUser = async (req, res) => {
     try {
         await initializeUserTable();
-        const { Name, Email, Password, PhoneNo, Role } = req.body;
-        console.log(Name , Email , Password , PhoneNo , Role);
+        const { name, email, password, phoneno, role } = req.body;
+        console.log(req.body);
+        console.log(name , email , password , phoneno , role);
 
-        if (!Email || !Name || !Password || !PhoneNo || !Role) {
+        if (!email || !name || !password || !phoneno || !role) {
             res.status(400).json({
                 success: false,
                 message: "All field are required."
@@ -21,7 +22,7 @@ export const registerUser = async (req, res) => {
             return
         }
         
-        const user = await client.query(searchQuery, [Email]);
+        const user = await client.query(searchQuery, [email]);
 
         if (user.rows.length > 0) {
             res.status(400).json({
@@ -32,10 +33,10 @@ export const registerUser = async (req, res) => {
         }
 
         const hashedPassword = createHmac('sha256', secret)
-            .update(Password)
+            .update(password)
             .digest('hex');
 
-        const userCreated = await insertUser({ Name, Email, Password: hashedPassword, PhoneNo, Role });
+        const userCreated = await insertUser({ Name:name, Email:email, Password: hashedPassword, PhoneNo:phoneno, Role:role });
 
         if (!userCreated) {
             return res.status(500).json({
@@ -63,16 +64,17 @@ export const loginUser = async (req, res) => {
 
     try {
 
-        const { Email, Password } = req.body;
+        const { email, password } = req.body;
 
-        if (!Email || !Password) {
+        console.log(email, password);
+        if (!email || !password) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required to be filled",
             })
         }
 
-        const result = await client.query(searchQuery, [Email]);
+        const result = await client.query(searchQuery, [email]);
 
         if (result.rows.length === 0) {
             res.status(400).json({
@@ -84,7 +86,7 @@ export const loginUser = async (req, res) => {
         const user = result.rows[0];
 
         const hashedPassword = createHmac('sha256', secret)
-            .update(Password)
+            .update(password)
             .digest('hex');
 
 
@@ -97,9 +99,9 @@ export const loginUser = async (req, res) => {
 
         const userData = {
             UserId:user.userid,
-            Name: user.name,
-            Email: user.email,
-            Role:user.role
+            name: user.name,
+            email: user.email,
+            role:user.role
         }
 
         const token = getJwtToken(userData);
