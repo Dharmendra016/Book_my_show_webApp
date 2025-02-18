@@ -5,7 +5,7 @@ const seatModel = `
         Row VARCHAR(10) NOT NULL,
         Number INT NOT NULL,
         IsAvailable BOOLEAN DEFAULT TRUE,
-        FOREIGN KEY (VenueID) REFERENCES "Venue"(VenueId) ON DELETE CASCADE
+        FOREIGN KEY (VenueID) REFERENCES "Venue"(venueid) ON DELETE CASCADE
     );
 `;
 

@@ -12,13 +12,13 @@ const eventModel = `
         PricePerSeat DECIMAL(10, 2),
         VenueID INT,
         CreatedByUserID INT,
-        FOREIGN KEY (VenueID) REFERENCES Venue(VenueID) ON DELETE CASCADE,
-        FOREIGN KEY (CreatedByUserID) REFERENCES User(UserId) ON DELETE CASCADE
+        FOREIGN KEY (VenueID) REFERENCES "Venue"(venueid) ON DELETE CASCADE,
+        FOREIGN KEY (CreatedByUserID) REFERENCES "User"(userid) ON DELETE CASCADE
     );
 `;
 
 const eventInsert = `
-    INSERT INTO Event (Name, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, CreatedByUserID)
+    INSERT INTO "Event"(Name, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, CreatedByUserID)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     RETURNING *;
 `;
