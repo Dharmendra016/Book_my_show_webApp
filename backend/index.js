@@ -6,7 +6,9 @@ import {dbConnection} from "./utility/dbConnect.js"
 import userRoutes from "./routes/userRoutes.js"
 import { authentication } from "./middlewares/auth.js";
 import eventRoutes from "./routes/eventRoutes.js"
- 
+import venueRoutes from "./routes/venueRoutes.js"
+import seatRoutes from "./routes/seatRoutes.js"
+
 const app = express();
 
 const PORT = process.env.PORT || 8000;
@@ -26,7 +28,8 @@ dbConnection()
 //api
 app.use("/",userRoutes);
 app.use("/",eventRoutes);
-
+app.use("/",venueRoutes);
+app.use("/",seatRoutes);
 
 app.get("/", authentication,(req, res) => {
   res.send("Hello world");
