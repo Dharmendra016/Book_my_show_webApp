@@ -12,7 +12,7 @@ const eventModel = `
         PricePerSeat DECIMAL(10, 2),
         VenueID INT,
         CreatedByUserID INT,
-        ImageUrl TEXT,
+        ImageUrl TEXT DEFAULT 'https://www.pexels.com/search/event/',
         FOREIGN KEY (VenueID) REFERENCES "Venue"(venueid) ON DELETE CASCADE,
         FOREIGN KEY (CreatedByUserID) REFERENCES "User"(userid) ON DELETE CASCADE
     );
@@ -45,7 +45,6 @@ const insertEvent = async ({ Title, Description, Genre, Language, Duration, Date
             PricePerSeat,
             VenueID,
             CreatedByUserID,
-            ImageUrl,
         ]);
         return result.rows[0]; 
     } catch (error) {

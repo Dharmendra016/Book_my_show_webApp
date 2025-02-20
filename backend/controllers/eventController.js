@@ -6,11 +6,12 @@ export const createEvent = async (req, res) => {
     try {
 
         // Validate and get event data from the request body
-        const { Name, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID } = req.body;
-        const userId = req.user.UserId;
+        const { Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID } = req.body;
+        const userId = req.user.userid;
 
+        console.log(Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID);
         // Validate that all required fields are provided
-        if (!Name || !Description || !Genre || !Language || !Duration || !DateTime || !PricePerSeat || !VenueID) {
+        if (!Title || !Description || !Genre || !Language || !Duration || !DateTime || !PricePerSeat || !VenueID) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required!"
@@ -40,7 +41,7 @@ export const createEvent = async (req, res) => {
         // Create the event
         await initializeEventTable();
         const createdEvent = await insertEvent({
-            Name,
+            Title,
             Description,
             Genre,
             Language,
@@ -48,7 +49,7 @@ export const createEvent = async (req, res) => {
             DateTime,
             PricePerSeat,
             VenueID,  // Use the VenueID provided in the request
-            CreatedByUserID: userId
+            CreatedByUserID: userId,
         });
 
         if (!createdEvent) {
@@ -60,7 +61,8 @@ export const createEvent = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Successfully created event"
+            message: "Successfully created event",
+            event: createdEvent
         });
 
     } catch (error) {
@@ -141,3 +143,61 @@ export const deleteEvent = async (req, res) => {
         });
     }
 };
+
+
+export const eventUpdate = async (req, res) => {
+    const eventId = req.params.id;
+    try {
+        const { Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID } = req.body;
+        const userId = req.user.userid;
+
+        console.log(Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID);
+        if (!Title || !Description || !Genre || !Language || !Duration || !DateTime || !PricePerSeat || !VenueID) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required!"
+            });
+        }
+
+        const user = await client.query(searchQuery, [userId]);
+        if (!user.rows.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const venueQuery = `SELECT * FROM "Venue" WHERE venueid = $1`;
+        const venueResult = await client.query(venueQuery, [VenueID]);
+
+        if (venueResult.rows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Venue not found"
+            });
+        }
+
+        const updateEventQuery = `UPDATE "Event" SET Title = $1, Description = $2, Genre = $3, Language = $4, Duration = $5, DateTime = $6, PricePerSeat = $7, VenueID = $8 WHERE EventID = $9`;
+        const updatedEvent = await client.query(updateEventQuery, [Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, eventId]);
+
+        if (updatedEvent.rowCount === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Event not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Event updated successfully",
+            event: updatedEvent.rows[0]
+        });
+
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+}
