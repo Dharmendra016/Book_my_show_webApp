@@ -2,7 +2,6 @@ import Homepage from "./components/Homepage";
 import { createBrowserRouter, RouterProvider} from "react-router";
 import Signup from "./components/signup";
 import Login from "./components/Login";
-import { ModeToggle } from "./components/mode-toggle";
 function App() {
 
   const browserRouter = createBrowserRouter([
@@ -22,7 +21,6 @@ function App() {
 
   return (
     <>
-    <ModeToggle/>
     <RouterProvider router={browserRouter}/>
     </>
   )

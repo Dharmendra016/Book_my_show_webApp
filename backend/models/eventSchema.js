@@ -3,7 +3,7 @@ import { client } from "../utility/dbConnect.js";
 const eventModel = `
     CREATE TABLE IF NOT EXISTS "Event" (
         EventID SERIAL PRIMARY KEY,
-        Name VARCHAR(255) NOT NULL,
+        Title VARCHAR(255) NOT NULL,
         Description TEXT,
         Genre VARCHAR(50),
         Language VARCHAR(50),
@@ -12,14 +12,15 @@ const eventModel = `
         PricePerSeat DECIMAL(10, 2),
         VenueID INT,
         CreatedByUserID INT,
+        ImageUrl TEXT,
         FOREIGN KEY (VenueID) REFERENCES "Venue"(venueid) ON DELETE CASCADE,
         FOREIGN KEY (CreatedByUserID) REFERENCES "User"(userid) ON DELETE CASCADE
     );
 `;
 
 const eventInsert = `
-    INSERT INTO "Event"(Name, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, CreatedByUserID)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    INSERT INTO "Event"(Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, CreatedByUserID, ImageUrl)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10)
     RETURNING *;
 `;
 
@@ -32,10 +33,10 @@ const initializeEventTable = async () => {
     }
 };
 
-const insertEvent = async ({ Name, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, CreatedByUserID }) => {
+const insertEvent = async ({ Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, CreatedByUserID,ImageUrl }) => {
     try {
         const result = await client.query(eventInsert, [
-            Name,
+            Title,
             Description,
             Genre,
             Language,
@@ -44,6 +45,7 @@ const insertEvent = async ({ Name, Description, Genre, Language, Duration, DateT
             PricePerSeat,
             VenueID,
             CreatedByUserID,
+            ImageUrl,
         ]);
         return result.rows[0]; 
     } catch (error) {

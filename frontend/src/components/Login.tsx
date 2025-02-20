@@ -13,12 +13,25 @@ import { Label } from "@/components/ui/label"
 import axios from "axios"
 import { toast } from "sonner"
 import { Link, useNavigate } from "react-router"
+import { useDispatch, useSelector } from "react-redux"
+import { setAuthUser } from "@/redux/authSlice"
 function Login() {
 
     const [input, setInput] = React.useState({
         email: "",
         password: "",
     })
+
+
+    const dispatch = useDispatch();
+    const {user} = useSelector((store: any) => store.auth);
+
+
+    React.useEffect(() =>{
+        if(user){
+            navigate("/");
+        }
+    },[])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput({
@@ -41,13 +54,13 @@ function Login() {
             })
             console.log('Response:', res.data);
             if (res.data.success) {
+                dispatch(setAuthUser(res.data.user))
+                navigate('/')
                 toast.success(res.data.message);
-                
                 setInput({
                     email: "",
                     password: "",
                 })
-                navigate('/')
             }
             
         } catch (error: any) {

@@ -112,7 +112,8 @@ export const loginUser = async (req, res) => {
             maxAge: 60 * 60 * 1000,
         }).json({
             success: true,
-            message: `Welcome back ${user?.name}`
+            message: `Welcome back ${user?.name}`,
+            user: userData
         });
 
 
