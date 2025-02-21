@@ -144,3 +144,22 @@ export const logout = async (req, res)=> {
         })
     }
 }
+
+
+export const getUser = async (req, res) => {
+    try {
+        const userid = req.user.userid;
+        const user = await client.query(`SELECT * FROM "User" WHERE userid = $1`, [userid]);
+        return res.status(200).json({
+            success: true,
+            message: "successfully fetched user",
+            user: user.rows[0]
+        })
+    } catch (error) {
+        console.log(error.message);
+        return res.status(404).json({
+            success:false,
+            message:"Internal error"
+        })
+    }
+}

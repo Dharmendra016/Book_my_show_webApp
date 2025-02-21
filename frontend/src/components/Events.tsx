@@ -10,11 +10,11 @@ import CreateEventForm from './CreateEventForm';
 // This will be replaced with actual API call
 const mockEvents: Event[] = [
   {
-    id: '1',
+    eventid: '1',
     title: 'Coldplay World Tour 2025',
     description: 'Experience the magic of Coldplay live in concert with their spectacular World Tour show featuring hits from across their entire discography.',
-    date: '2025-03-15',
-    time: '19:30',
+    datetime: '2025-03-15',
+    duration: '19:30',
     venue: 'National Stadium, Delhi',
     category: 'Concert',
     price: 4999,

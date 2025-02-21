@@ -42,9 +42,9 @@ const EditEventModal: React.FC<EditEventModalProps> = ({ event, isOpen, onClose,
     const [formData, setFormData] = useState<Event>(event);
     const [loading, setLoading] = useState(false);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(event.imageurl);
-    const [date, setDate] = useState(event.datetime.split("T")[0]);
-    const [time, setTime] = useState(event.datetime.split("T")[1]?.slice(0, 5) || "00:00");
+    const [previewUrl, setPreviewUrl] = useState<string | null>(event?.imageurl);
+    const [date, setDate] = useState(event?.datetime.split("T")[0]);
+    const [time, setTime] = useState(event?.datetime.split("T")[1]?.slice(0, 5) || "00:00");
 
     const navigate = useNavigate();
     // Reset form when event changes
@@ -128,28 +128,40 @@ const EditEventModal: React.FC<EditEventModalProps> = ({ event, isOpen, onClose,
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-
+        console.log("Form data:", formData);
         try {
-            // Update event
-            const eventPayload = {
-                Title: formData.title,
-                Description: formData.description,
-                Genre: formData.genre,
-                Language: formData.language,
-                Duration: formData.duration,
-                DateTime: formData.datetime,
-                PricePerSeat: formData.priceperseat,
-                VenueID: formData.venue?.venueid,
-            };
-            console.log('eventPayload' , eventPayload);
-            // Update event
+            
+
+            const formDataToSend = new FormData();
+            formDataToSend.append("Title", formData.title);
+            formDataToSend.append("Description", formData.description);
+            formDataToSend.append("Genre", formData.genre);
+            formDataToSend.append("Language", formData.language);
+            formDataToSend.append("Duration", formData.duration.toString());
+            formDataToSend.append("DateTime", formData.datetime);
+            formDataToSend.append("PricePerSeat", formData.priceperseat.toString());
+            formDataToSend.append("VenueID", formData.venue?.venueid.toString() || "");
+            formDataToSend.append("ImageUrl", event.imageurl);
+            
+            // If a new image is selected, append it
+            if (selectedImage) {
+                formDataToSend.append("image", selectedImage);
+            }
+
+
+    
+            // Send the form data to backend
             const eventResponse = await axios.post(
                 `http://localhost:3000/updateEvent/${formData.eventid}`,
-                eventPayload,
+                formDataToSend,
                 {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
                     withCredentials: true,
                 }
             );
+    
             // Update venue if it exists
             if (formData.venue) {
                 await axios.post(
@@ -164,10 +176,12 @@ const EditEventModal: React.FC<EditEventModalProps> = ({ event, isOpen, onClose,
                     }
                 );
             }
-
-           
-           onUpdate(eventResponse.data.updatedEvent);
+    
+            onUpdate(eventResponse.data.updatedEvent);
             onClose();
+            setTimeout(() => {
+                window.location.reload();
+              }, 1000);
             
         } catch (error) {
             console.error("Error updating event:", error);

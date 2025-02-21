@@ -1,3 +1,5 @@
+import { client } from "../utility/dbConnect.js";
+
 const bookingModel = `
     CREATE TABLE IF NOT EXISTS "Booking"(
         BookingID SERIAL PRIMARY KEY,
@@ -6,7 +8,7 @@ const bookingModel = `
         BookingDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         SeatsBooked INT NOT NULL,
         TotalAmount DECIMAL NOT NULL,
-        FOREIGN KEY (EventID) REFERENCES "Event"(EventId) ON DELETE CASCADE
+        FOREIGN KEY (EventID) REFERENCES "Event"(eventid) ON DELETE CASCADE
     );
 `;
 

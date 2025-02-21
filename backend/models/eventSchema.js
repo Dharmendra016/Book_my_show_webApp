@@ -45,6 +45,7 @@ const insertEvent = async ({ Title, Description, Genre, Language, Duration, Date
             PricePerSeat,
             VenueID,
             CreatedByUserID,
+            ImageUrl
         ]);
         return result.rows[0]; 
     } catch (error) {

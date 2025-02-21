@@ -1,3 +1,4 @@
+import e from "express";
 import { initializeEventTable, insertEvent } from "../models/eventSchema.js";
 import { client } from "../utility/dbConnect.js";
 
@@ -40,6 +41,8 @@ export const createEvent = async (req, res) => {
 
         // Create the event
         await initializeEventTable();
+        const ImageUrl = req.file ? req.file.path : null;
+        console.log("ImageUrl", ImageUrl);
         const createdEvent = await insertEvent({
             Title,
             Description,
@@ -50,6 +53,7 @@ export const createEvent = async (req, res) => {
             PricePerSeat,
             VenueID,  // Use the VenueID provided in the request
             CreatedByUserID: userId,
+            ImageUrl
         });
 
         if (!createdEvent) {
@@ -148,7 +152,7 @@ export const deleteEvent = async (req, res) => {
 export const eventUpdate = async (req, res) => {
     const eventId = req.params.id;
     try {
-        const { Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID } = req.body;
+        const { Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID , ImageUrl} = req.body;
         const userId = req.user.userid;
 
         console.log(Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID);
@@ -176,9 +180,12 @@ export const eventUpdate = async (req, res) => {
                 message: "Venue not found"
             });
         }
+        
+        const imageurl = req.file ? req.file.path : ImageUrl;
+        console.log("ImageUrl", ImageUrl);
 
-        const updateEventQuery = `UPDATE "Event" SET Title = $1, Description = $2, Genre = $3, Language = $4, Duration = $5, DateTime = $6, PricePerSeat = $7, VenueID = $8 WHERE EventID = $9`;
-        const updatedEvent = await client.query(updateEventQuery, [Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, eventId]);
+        const updateEventQuery = `UPDATE "Event" SET Title = $1, Description = $2, Genre = $3, Language = $4, Duration = $5, DateTime = $6, PricePerSeat = $7, VenueID = $8, ImageUrl = $9 WHERE EventID = $10 RETURNING *`;
+        const updatedEvent = await client.query(updateEventQuery, [Title, Description, Genre, Language, Duration, DateTime, PricePerSeat, VenueID, imageurl, eventId]);
 
         if (updatedEvent.rowCount === 0) {
             return res.status(400).json({

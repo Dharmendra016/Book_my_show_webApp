@@ -1,16 +1,18 @@
+import { client } from "../utility/dbConnect.js";
+
 const seatModel = `
     CREATE TABLE IF NOT EXISTS "Seat"(
         SeatID SERIAL PRIMARY KEY,
         VenueID INT NOT NULL,
-        Row VARCHAR(10) NOT NULL,
-        Number INT NOT NULL,
-        IsAvailable BOOLEAN DEFAULT TRUE,
+        SeatNumber VARCHAR(10) NOT NULL,
+        IsBooked BOOLEAN DEFAULT FALSE,
+        Price DECIMAL(10, 2) DEFAULT 0.00,
         FOREIGN KEY (VenueID) REFERENCES "Venue"(venueid) ON DELETE CASCADE
     );
 `;
 
 const seatInput = `
-    INSERT INTO "Seat"(VenueID, Row, Number, IsAvailable)
+    INSERT INTO "Seat"(VenueID, SeatNumber, isBooked , Price)
     VALUES ($1, $2, $3, $4)
     RETURNING *;
 `;
@@ -24,9 +26,12 @@ const initializeSeatTable = async () => {
     }
 };
 
-const insertSeat = async ({ VenueID, Row, Number, IsAvailable = true }) => {
+const insertSeat = async ({ VenueID, SeatNumber, isBooked = false , Price }) => {
     try {
-        const result = await client.query(seatInput, [VenueID, Row, Number, IsAvailable]);
+        console.log("SeatNumber", SeatNumber);
+        console.log("VenueID", VenueID);
+
+        const result = await client.query(seatInput, [VenueID, SeatNumber, isBooked, Price]);
         return result.rows[0];
     } catch (error) {
         console.error("Error inserting seat:", error.message);

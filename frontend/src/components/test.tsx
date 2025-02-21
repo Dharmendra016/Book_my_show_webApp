@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PlusCircle } from "lucide-react";
 import { RootState } from "../redux/store";
 import EventCard from "./EventCard";
 import { Button } from "./ui/button";
 import CreateEventForm from "./CreateEventForm";
+import { setEvent } from "@/redux/eventSlice";
 
 interface Event {
   eventid: string;
@@ -36,6 +37,8 @@ const Test = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const isAdmin = user?.role === "admin";
 
+  const dispatch  = useDispatch();
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -47,6 +50,8 @@ const Test = () => {
 
         const eventsData: Event[] = eventsRes.data.events;
 
+
+        dispatch(setEvent(eventsRes?.data?.events));
         // Fetch venue details for each event
         console.log('eventsData' , eventsData);
         const eventsWithVenues = await Promise.all(

@@ -6,6 +6,8 @@ import { Textarea } from "./ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Label } from "./ui/label";
 import { ImagePlus } from "lucide-react";
+import { addEvent } from "@/redux/eventSlice";
+import { useDispatch } from "react-redux";
 
 interface CreateEventFormProps {
   onClose: () => void;
@@ -16,6 +18,8 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [venueId, setVenueId] = useState<string>("");
 
+  const dispatch = useDispatch();
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -24,7 +28,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
       setPreviewUrl(url); // Show preview image
     }
   };
-  
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,23 +42,35 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
 
     try {
       // Step 1: Create Venue
-      const venueRes = await axios.post("http://localhost:3000/venue", venuePayload , {withCredentials:true});
+      const venueRes = await axios.post("http://localhost:3000/venue", venuePayload, { withCredentials: true });
       const newVenueId = venueRes.data.venue.venueid; // Assuming API returns { id: '123' }
       setVenueId(newVenueId);
 
-      // Step 2: Create Event
-      const eventPayload = {
-        Title: formData.get("title"),
-        Description: formData.get("description"),
-        Genre: formData.get("genre"),
-        Language: formData.get("language"),
-        Duration: formData.get("duration"),
-        DateTime: `${formData.get("date")}T${formData.get("time")}`,
-        PricePerSeat: Number(formData.get("price")),
-        VenueID: newVenueId,
-      };
+      const formData = new FormData(e.target as HTMLFormElement);
 
-      await axios.post("http://localhost:3000/createEvent", eventPayload , {withCredentials:true});
+      // Convert FormData fields to JSON
+      const eventPayload = new FormData();
+      eventPayload.append("Title", formData.get("title") as string);
+      eventPayload.append("Description", formData.get("description") as string);
+      eventPayload.append("Genre", formData.get("genre") as string);
+      eventPayload.append("Language", formData.get("language") as string);
+      eventPayload.append("Duration", formData.get("duration") as string);
+      eventPayload.append("DateTime", `${formData.get("date")}T${formData.get("time")}`);
+      eventPayload.append("PricePerSeat", formData.get("price") as string);
+      eventPayload.append("VenueID", venueId);
+
+      if (selectedImage) {
+        eventPayload.append("image", selectedImage); // Append image file
+      }
+
+      const response = await axios.post("http://localhost:3000/createEvent", eventPayload, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
+      });
+
+      dispatch(addEvent(response.data.event)); // Update Redux store
+      
+      console.log(response.data);
       onClose(); // Close form on success
     } catch (error) {
       console.error("Error:", error);
@@ -69,7 +85,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
           <Label htmlFor="title">Title</Label>
           <Input id="title" name="title" required />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="genre">Genre</Label>
           <Select name="genre">
@@ -109,7 +125,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
             <Label htmlFor="venueName">Venue Name</Label>
             <Input id="venueName" name="venueName" required />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="venueCapacity">Capacity</Label>
             <Input type="number" id="venueCapacity" name="venueCapacity" min="1" required />
@@ -126,7 +142,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
           <Label htmlFor="date">Date</Label>
           <Input type="date" id="date" name="date" required />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="time">Time</Label>
           <Input type="time" id="time" name="time" required />

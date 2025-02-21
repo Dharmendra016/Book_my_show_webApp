@@ -1,5 +1,9 @@
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import EditEventModal from "./EditEventModal";
+import BookingModal from "./BookingModal";
+import axios from "axios";
 
 interface Event {
   eventid: string;
@@ -13,7 +17,7 @@ interface Event {
   venueid: number;
   createdbyuserid: number;
   imageurl: string;
-  venue: Venue | null; // Holds fetched venue details
+  venue: Venue | null;
 }
 
 interface Venue {
@@ -25,20 +29,17 @@ interface Venue {
 
 interface EventCardProps {
   event: Event;
-  userId?: number; // ID of the currently logged-in user
+  userId?: number;
 }
 
 interface Seat {
-  seatNumber: string;
-  seatType: string;
+  seatid: number;
+  seatnumber: string;
+  seattype: string;
   price: number;
-  venueId: number;
-  isBooked?: boolean;
+  venueid: number;
+  isbooked?: boolean;
 }
-
-import { useState } from "react";
-import EditEventModal from "./EditEventModal";
-import BookingModal from "./BookingModal";
 
 const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -47,10 +48,38 @@ const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
 
   const isCreator = event.createdbyuserid === userId;
 
+  const getTotalPrice = (selectedSeats: Seat[]): number => {
+    return selectedSeats.reduce((total, seat) => {
+      const price = Number(seat.price) || 0;
+      return total + price;
+    }, 0);
+  };
+
   const handleBookingConfirm = async (selectedSeats: Seat[]) => {
-    // Implement your booking logic here
-    console.log('Booking confirmed for seats:', selectedSeats);
-    // Make API call to your backend to process the booking
+    const bookingData = {
+      UserID: event.createdbyuserid,
+      EventID: event.eventid,
+      SeatsBooked: selectedSeats.length,
+      TotalAmount: getTotalPrice(selectedSeats),
+    };
+    const response = await axios.post('http://localhost:3000/bookingseat', bookingData);
+    console.log(response.data);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
+  const handleDelete = async () => {
+    try {
+      if (confirm('Are you sure you want to delete this event?')) {
+        await axios.get(`http://localhost:3000/deleteEvent/${event.eventid}`);
+        // Reload the page after successful deletion
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      alert('Failed to delete event. Please try again.');
+    }
   };
 
   return (
@@ -83,26 +112,30 @@ const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
           </div>
         </div>
         {isCreator ? (
-          <Button onClick={() => setIsEditing(true)} className="w-full bg-yellow-500 hover:bg-yellow-600">
-            Edit
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setIsEditing(true)} className="flex-1 bg-yellow-500 hover:bg-yellow-600">
+              Edit
+            </Button>
+            <Button onClick={handleDelete} className="flex-1 bg-red-500 hover:bg-red-600">
+              Delete
+            </Button>
+          </div>
         ) : (
           <Button 
-          onClick={() => setIsBooking(true)} 
-          className="w-full bg-blue-500 hover:bg-blue-600"
-        >
-          Book Now
-        </Button>
+            onClick={() => setIsBooking(true)} 
+            className="w-full bg-blue-500 hover:bg-blue-600"
+          >
+            Book Now
+          </Button>
         )}
 
-      <BookingModal
-        isOpen={isBooking}
-        onClose={() => setIsBooking(false)}
-        event={eventData}
-        onBookingConfirm={handleBookingConfirm}
-      />
+        <BookingModal
+          isOpen={isBooking}
+          onClose={() => setIsBooking(false)}
+          event={eventData}
+          onBookingConfirm={handleBookingConfirm}
+        />
 
-        {/* Edit Event Modal */}
         {isEditing && (
           <EditEventModal
             event={eventData}
