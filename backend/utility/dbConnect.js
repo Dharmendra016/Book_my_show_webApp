@@ -1,27 +1,21 @@
 import pkg from 'pg';
-import "dotenv/config";
 
 const { Client } = pkg;
-
 const client = new Client({
-	user: process.env.PG_NAME,
-	password: process.env.PG_PASSWORD,
-	host: process.env.PG_HOST,
-	port: process.env.PG_PORT,
-	database: process.env.DB_NAME,
-});
+  user: 'postgres',
+  password: 'c9Pu0gzK6jFygSAJ',
+  host: 'db.qlruphidgwrlqeuaithg.supabase.co',
+  port: 6543,
+  database: 'postgres',
+})
 
-const dbConnection = async () => {
+const dbConnect = async ()=>{
     try {
-       
         await client.connect();
-        
-        console.log("successfully connection to database !!");
-
+        return console.log('Successfully connected to pgDB');
     } catch (error) {
         console.log(error.message);
-        console.log("Failed to connect to database");
     }
 }
 
-export {dbConnection,client}; 
+export {dbConnect, client};

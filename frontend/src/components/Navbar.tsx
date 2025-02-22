@@ -48,12 +48,6 @@ const Navbar = () => {
               <a href="/" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium">
                 Home
               </a>
-              <a href="/shows" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium">
-                Shows
-              </a>
-              <a href="/about" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium">
-                About
-              </a>
             </div>
           </div>
 
@@ -68,11 +62,6 @@ const Navbar = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem asChild>
-                    <a href="/profile" className="w-full cursor-pointer">
-                      Profile
-                    </a>
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                     Logout
                   </DropdownMenuItem>
