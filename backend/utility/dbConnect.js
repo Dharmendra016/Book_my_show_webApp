@@ -1,7 +1,7 @@
 import pkg from 'pg';
 import dotenv from "dotenv";
+dotenv.config();
 
-dotenv.config(); // Load environment variables
 const { Client } = pkg;
 const client = new Client({
   user: 'postgres',

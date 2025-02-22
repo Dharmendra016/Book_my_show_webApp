@@ -45,9 +45,6 @@ app.get("*", (req,res)=>{
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
 })
 
-
-
-
 //table initialization
 const initializeTables = async () => {
   await initializeBookingTable();
@@ -56,7 +53,6 @@ const initializeTables = async () => {
   await initializeUserTable(); 
   await initializeVenueTable(); 
 }
-
 
 
 try {

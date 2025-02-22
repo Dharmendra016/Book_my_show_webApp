@@ -150,7 +150,7 @@ const EditEventModal: React.FC<EditEventModalProps> = ({ event, isOpen, onClose,
     
             // Send the form data to backend
             const eventResponse = await axios.post(
-                `https://book-my-show-webapp.onrender.com/updateEvent/${formData.eventid}`,
+                `http://localhost:3000/updateEvent/${formData.eventid}`,
                 formDataToSend,
                 {
                     headers: {
@@ -163,7 +163,7 @@ const EditEventModal: React.FC<EditEventModalProps> = ({ event, isOpen, onClose,
             // Update venue if it exists
             if (formData.venue) {
                 await axios.post(
-                    `https://book-my-show-webapp.onrender.com/updateVenue/${formData.venue.venueid}`,
+                    `http://localhost:3000/updateVenue/${formData.venue.venueid}`,
                     {
                         Name: formData.venue.name,
                         Location: formData.venue.location,

@@ -42,7 +42,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
 
     try {
       // Step 1: Create Venue
-      const venueRes = await axios.post("https://book-my-show-webapp.onrender.com/venue", venuePayload, { withCredentials: true });
+      const venueRes = await axios.post("http://localhost:3000/venue", venuePayload, { withCredentials: true });
       const newVenueId = venueRes.data.venue.venueid; // Assuming API returns { id: '123' }
       setVenueId(newVenueId);
 
@@ -63,7 +63,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
         eventPayload.append("image", selectedImage); // Append image file
       }
 
-      const response = await axios.post("https://book-my-show-webapp.onrender.com/createEvent", eventPayload, {
+      const response = await axios.post("http://localhost:3000/createEvent", eventPayload, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
       });
