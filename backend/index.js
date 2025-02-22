@@ -19,9 +19,11 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors({
-  origin: "https://book-my-show-webapp.onrender.com",
-  credentials: true,
+  origin: 'https://book-my-show-web-app.vercel.app',
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
