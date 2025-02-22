@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8000;
 
 const __dirname = path.resolve();
 app.use(cors({
-  origin: 'https://book-my-show-web-app.vercel.app',
+  origin: 'https://book-my-show-webapp.onrender.com',
   methods: 'GET,POST,PUT,DELETE',
   credentials: true
 }));
