@@ -27,6 +27,7 @@ This project is a web application for booking shows. It allows users to browse e
 - **Authentication**: JWT (JSON Web Tokens)
 - **Styling**: Tailwind, Shadcn
 - **Deployment**: Vercel (Frontend), render (Backend)
+- **Storage**: Cloudinary
 
 ## Database Schema
 
