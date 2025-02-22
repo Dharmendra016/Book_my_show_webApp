@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { ImagePlus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axios from "axios";
-import { useNavigate } from "react-router";
 
 interface Event {
     eventid: string;
@@ -46,7 +45,6 @@ const EditEventModal: React.FC<EditEventModalProps> = ({ event, isOpen, onClose,
     const [date, setDate] = useState(event?.datetime.split("T")[0]);
     const [time, setTime] = useState(event?.datetime.split("T")[1]?.slice(0, 5) || "00:00");
 
-    const navigate = useNavigate();
     // Reset form when event changes
     useEffect(() => {
         setFormData(event);

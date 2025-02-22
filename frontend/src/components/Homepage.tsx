@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import Navbar from "./Navbar";
-import Events from "./Events";
 import Test from "./test";
 
 const Homepage = () => {
