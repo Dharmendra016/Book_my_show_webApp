@@ -52,7 +52,7 @@ Stores booking details and references the Event table.
     git clone <repository-url>
     ```
 2. **Set up environment variables**: Create a `.env` file in the root directory and add the following:
-```plaintext
+    ```plaintext
     PORT=3000
     PG_NAME=postgres 
     PG_HOST=127.0.0.1
@@ -79,6 +79,7 @@ Stores booking details and references the Event table.
 - **Browse Events**: View a list of available events.
 - **Book Seats**: Select seats and book them for an event.
 - **Manage Bookings**: View and cancel your bookings.
+
 
 ## Collaborators
 - Bipin Kumar Marasini (THA078BCT014)
