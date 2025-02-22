@@ -86,4 +86,4 @@ Stores booking details and references the Event table.
 - Dharmendra Singh Chaudhary (THA078BCT016)
 - Jesis Upadhaya (THA078BCT017)
 
-This project is developed as part of our DBMS course to demonstrate our understanding of database design, SQL queries, and web application development.
+This project is developed as part of our DBMS course to demonstrate our understanding of database design, SQL queries.
