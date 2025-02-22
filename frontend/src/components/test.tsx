@@ -43,7 +43,7 @@ const Test = () => {
     const fetchEvents = async () => {
       try {
         // Fetch all events first
-        const eventsRes = await axios.get("http://localhost:3000/getEvents", {
+        const eventsRes = await axios.get("https://book-my-show-webapp.onrender.com/getEvents", {
             withCredentials: true,
         });
         if (!eventsRes.data.success) throw new Error("Failed to fetch events");
@@ -57,7 +57,7 @@ const Test = () => {
         const eventsWithVenues = await Promise.all(
           eventsData.map(async (event) => {
             try {
-              const venueRes = await axios.get(`http://localhost:3000/venue/${event.venueid}` , {withCredentials:true});
+              const venueRes = await axios.get(`https://book-my-show-webapp.onrender.com/venue/${event.venueid}` , {withCredentials:true});
                 console.log(venueRes);
               return { ...event, venue: venueRes.data.venues[0] || null }; // Add venue data
             } catch (error) {

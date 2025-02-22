@@ -1,9 +1,10 @@
 import pkg from 'pg';
+import "dotenv/config";
 
 const { Client } = pkg;
 const client = new Client({
   user: 'postgres',
-  password: 'c9Pu0gzK6jFygSAJ',
+  password: process.env.PG_PASSWORD,
   host: 'db.qlruphidgwrlqeuaithg.supabase.co',
   port: 6543,
   database: 'postgres',

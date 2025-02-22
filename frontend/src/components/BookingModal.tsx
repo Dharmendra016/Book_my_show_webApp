@@ -69,13 +69,13 @@ const BookingModal: React.FC<BookingModalProps> = ({
         setError(null);
         
         // First try to fetch existing seats
-        const response = await fetch(`http://localhost:3000/seats/${event.venueid}`);
+        const response = await fetch(`https://book-my-show-webapp.onrender.com/${event.venueid}`);
         let venueSeats = await response.json();
         venueSeats = venueSeats?.seats;
         
         if (!venueSeats || venueSeats.length === 0) {
           // If no seats exist, create them through the API
-          const createSeatsResponse = await fetch('http://localhost:3000/createseat', {
+          const createSeatsResponse = await fetch('https://book-my-show-webapp.onrender.com/createseat', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
           }
 
           // Fetch the newly created seats
-          const newSeatsResponse = await fetch(`http://localhost:3000/seats/${event.venueid}`);
+          const newSeatsResponse = await fetch(`https://book-my-show-webapp.onrender.com/${event.venueid}`);
           venueSeats = await newSeatsResponse.json();
           venueSeats = venueSeats?.seats;
         }
@@ -105,7 +105,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         const seatsWithAvailability = await Promise.all(
           venueSeats.map(async (seat: Seat) => {
             const availabilityResponse = await fetch(
-              `http://localhost:3000/seats/check/${seat.seatnumber}/${event.venueid}`
+              `https://book-my-show-webapp.onrender.com/seats/check/${seat.seatnumber}/${event.venueid}`
             );
             const availability = await availabilityResponse.json();
             return {
@@ -157,7 +157,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     
     selectedSeats?.map(async(seat) => {
       console.log(seat.seatid, seat.seatnumber, seat.venueid);
-      const res = await axios.get(`http://localhost:3000/bookseat/${seat.seatid}/${seat.seatnumber}/${event.venueid}`);
+      const res = await axios.get(`https://book-my-show-webapp.onrender.com/bookseat/${seat.seatid}/${seat.seatnumber}/${event.venueid}`);
       console.log(res);
     });
 
