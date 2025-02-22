@@ -21,10 +21,11 @@ const PORT = process.env.PORT || 8000;
 
 const __dirname = path.resolve();
 app.use(cors({
-  origin: 'https://book-my-show-webapp.onrender.com',
-  methods: 'GET,POST,PUT,DELETE',
+  origin: ["http://localhost:3000", "https://book-my-show-webapp.vercel.app"], // Allow localhost & deployed site
+  methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
+
 
 app.use(express.json());
 app.use(cookieParser());
