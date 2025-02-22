@@ -24,10 +24,9 @@ This project is a web application for booking shows. It allows users to browse e
 - **Frontend**: React.js
 - **Backend**: Node.js, Express.js
 - **Database**: PostgreSQL
-- **ORM**: Sequelize
 - **Authentication**: JWT (JSON Web Tokens)
-- **Styling**: CSS, Bootstrap
-- **Deployment**: Vercel (Frontend), Heroku (Backend)
+- **Styling**: Tailwind, Shadcn
+- **Deployment**: Vercel (Frontend), render (Backend)
 
 ## Database Schema
 
