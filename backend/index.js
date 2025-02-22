@@ -14,10 +14,12 @@ import { initializeEventTable } from "./models/eventSchema.js";
 import { initializeSeatTable } from "./models/seatSchema.js";
 import { initializeUserTable } from "./models/userSchema.js";
 import { initializeVenueTable } from "./models/venueSchema.js";
+import path from "path";
 const app = express();
 
 const PORT = process.env.PORT || 8000;
 
+const __dirname = path.resolve();
 app.use(cors({
   origin: 'https://book-my-show-web-app.vercel.app',
   methods: 'GET,POST,PUT,DELETE',
@@ -37,6 +39,14 @@ app.use("/",venueRoutes);
 app.use("/",seatRoutes);
 app.use("/",bookingRoutes);
 
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+app.get("*", (req,res)=>{
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+})
+
+
+
+
 //table initialization
 const initializeTables = async () => {
   await initializeBookingTable();
@@ -45,6 +55,9 @@ const initializeTables = async () => {
   await initializeUserTable(); 
   await initializeVenueTable(); 
 }
+
+
+
 try {
   initializeTables();
 } catch (error) {
