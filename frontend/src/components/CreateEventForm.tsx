@@ -16,8 +16,7 @@ interface CreateEventFormProps {
 const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [venueId, setVenueId] = useState<string>("");
-
+  
   const dispatch = useDispatch();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +43,6 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
       // Step 1: Create Venue
       const venueRes = await axios.post("https://book-my-show-webapp-1.onrender.com/venue", venuePayload, { withCredentials: true });
       const newVenueId = venueRes.data.venue.venueid; // Assuming API returns { id: '123' }
-      setVenueId(newVenueId);
 
       const formData = new FormData(e.target as HTMLFormElement);
 
@@ -57,13 +55,12 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
       eventPayload.append("Duration", formData.get("duration") as string);
       eventPayload.append("DateTime", `${formData.get("date")}T${formData.get("time")}`);
       eventPayload.append("PricePerSeat", formData.get("price") as string);
-      eventPayload.append("VenueID", venueId);
+      eventPayload.append("VenueID", newVenueId);
 
       if (selectedImage) {
         eventPayload.append("image", selectedImage); // Append image file
       }
 
-      console.log("Event Payload:", eventPayload);  
       const response = await axios.post("https://book-my-show-webapp-1.onrender.com/createEvent", eventPayload, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
