@@ -73,9 +73,9 @@ export const loginUser = async (req, res) => {
                 message: "All fields are required to be filled",
             })
         }
-
+        console.log("before query");
         const result = await client.query(searchQuery, [email]);
-
+        console.log("after query");
         if (result.rows.length === 0) {
             res.status(400).json({
                 success: false,

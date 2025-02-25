@@ -9,11 +9,12 @@ import eventRoutes from "./routes/eventRoutes.js"
 import venueRoutes from "./routes/venueRoutes.js"
 import seatRoutes from "./routes/seatRoutes.js"
 import bookingRoutes from "./routes/bookingRoutes.js"
-import { initializeBookingTable } from "./models/bookingSchema.js";
-import { initializeEventTable } from "./models/eventSchema.js";
-import { initializeSeatTable } from "./models/seatSchema.js";
-import { initializeUserTable } from "./models/userSchema.js";
-import { initializeVenueTable } from "./models/venueSchema.js";
+// import { initializeBookingTable } from "./models/bookingSchema.js";
+// import { initializeEventTable } from "./models/eventSchema.js";
+// import { initializeSeatTable } from "./models/seatSchema.js";
+// import { initializeUserTable } from "./models/userSchema.js";
+// import { initializeVenueTable } from "./models/venueSchema.js";
+
 import path from "path";
 const app = express();
 
@@ -21,11 +22,16 @@ const PORT = process.env.PORT || 8000;
 
 const __dirname = path.resolve();
 app.use(cors({
-  origin: ["http://localhost:3000","https://book-my-show-webapp-1.onrender.com", "https://book-my-show-webapp.vercel.app"], // Allow localhost & deployed site
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true
+  origin: [
+    "https://book-my-show-webapp-1.onrender.com",
+    "http://localhost:3000",
+    "https://book-my-show-webapp.vercel.app",
+    "http://localhost:5173"
+  ],
+  methods: "GET, POST, PUT, DELETE",
+  credentials: true, // Important for cookies and sessions
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
-
 
 app.use(express.json());
 app.use(cookieParser());
@@ -46,20 +52,20 @@ app.get("*", (req,res)=>{
 })
 
 //table initialization
-const initializeTables = async () => {
-  await initializeBookingTable();
-  await initializeEventTable();
-  await initializeSeatTable(); 
-  await initializeUserTable(); 
-  await initializeVenueTable(); 
-}
+// const initializeTables = async () => {
+//   await initializeBookingTable();
+//   await initializeEventTable();
+//   await initializeSeatTable(); 
+//   await initializeUserTable(); 
+//   await initializeVenueTable(); 
+// }
 
 
-try {
-  initializeTables();
-} catch (error) {
-  console.log(error); 
-}
+// try {
+//   initializeTables();
+// } catch (error) {
+//   console.log(error); 
+// }
 
 
 app.get("/", authentication,(req, res) => {
