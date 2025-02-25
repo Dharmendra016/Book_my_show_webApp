@@ -63,6 +63,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
         eventPayload.append("image", selectedImage); // Append image file
       }
 
+      console.log("Event Payload:", eventPayload);  
       const response = await axios.post("https://book-my-show-webapp-1.onrender.com/createEvent", eventPayload, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
