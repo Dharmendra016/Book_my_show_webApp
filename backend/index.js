@@ -9,11 +9,11 @@ import eventRoutes from "./routes/eventRoutes.js"
 import venueRoutes from "./routes/venueRoutes.js"
 import seatRoutes from "./routes/seatRoutes.js"
 import bookingRoutes from "./routes/bookingRoutes.js"
-// import { initializeBookingTable } from "./models/bookingSchema.js";
-// import { initializeEventTable } from "./models/eventSchema.js";
-// import { initializeSeatTable } from "./models/seatSchema.js";
-// import { initializeUserTable } from "./models/userSchema.js";
-// import { initializeVenueTable } from "./models/venueSchema.js";
+import { initializeBookingTable } from "./models/bookingSchema.js";
+import { initializeEventTable } from "./models/eventSchema.js";
+import { initializeSeatTable } from "./models/seatSchema.js";
+import { initializeUserTable } from "./models/userSchema.js";
+import { initializeVenueTable } from "./models/venueSchema.js";
 
 import path from "path";
 const app = express();
@@ -51,21 +51,21 @@ app.get("*", (req,res)=>{
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
 })
 
-//table initialization
-// const initializeTables = async () => {
-//   await initializeBookingTable();
-//   await initializeEventTable();
-//   await initializeSeatTable(); 
-//   await initializeUserTable(); 
-//   await initializeVenueTable(); 
-// }
+// table initialization
+const initializeTables = async () => {
+  await initializeBookingTable();
+  await initializeEventTable();
+  await initializeSeatTable(); 
+  await initializeUserTable(); 
+  await initializeVenueTable(); 
+}
 
 
-// try {
-//   initializeTables();
-// } catch (error) {
-//   console.log(error); 
-// }
+try {
+  initializeTables();
+} catch (error) {
+  console.log(error); 
+}
 
 
 app.get("/", authentication,(req, res) => {
