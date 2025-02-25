@@ -27,7 +27,7 @@ app.use(cors({
     "http://localhost:3000",
     "https://book-my-show-webapp.vercel.app",
     "http://localhost:5173",
-    "https://book-my-show-web-app.vercel.app/"
+    "https://book-my-show-web-app.vercel.app"
   ],
   methods: "GET, POST, PUT, DELETE",
   credentials: true, // Important for cookies and sessions
