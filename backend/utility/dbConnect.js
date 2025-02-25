@@ -4,12 +4,10 @@ dotenv.config();
 
 const { Client } = pkg;
 const client = new Client({
-  user: 'postgres',
-  password: process.env.PASS_SUPA,
-  host: 'db.qlruphidgwrlqeuaithg.supabase.co',
-  port: 5432,
-  database: 'postgres',
-})
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }  // 🔥 Important for Render → Supabase
+  });
+  
 
 const dbConnect = async ()=>{
     try {
