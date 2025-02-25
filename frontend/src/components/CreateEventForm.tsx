@@ -11,9 +11,10 @@ import { useDispatch } from "react-redux";
 
 interface CreateEventFormProps {
   onClose: () => void;
+  refreshEvents: () => void;
 }
 
-const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
+const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose ,refreshEvents }) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
@@ -44,8 +45,6 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
       const venueRes = await axios.post("https://book-my-show-webapp-1.onrender.com/venue", venuePayload, { withCredentials: true });
       const newVenueId = venueRes.data.venue.venueid; // Assuming API returns { id: '123' }
 
-      const formData = new FormData(e.target as HTMLFormElement);
-
       // Convert FormData fields to JSON
       const eventPayload = new FormData();
       eventPayload.append("Title", formData.get("title") as string);
@@ -69,6 +68,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onClose }) => {
       dispatch(addEvent(response.data.event)); // Update Redux store
       
       console.log(response.data);
+      refreshEvents(); // Refresh events list
       onClose(); // Close form on success
     } catch (error) {
       console.error("Error:", error);

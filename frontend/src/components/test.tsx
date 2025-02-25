@@ -38,43 +38,43 @@ const Test = () => {
   const isAdmin = user?.role === "admin";
 
   const dispatch  = useDispatch();
+   const fetchEvents = async () => {
+        try {
+          // Fetch all events first
+          const eventsRes = await axios.get("https://book-my-show-webapp-1.onrender.com/getEvents", {
+              withCredentials: true,
+          });
+          if (!eventsRes.data.success) throw new Error("Failed to fetch events");
+  
+          const eventsData: Event[] = eventsRes.data.events;
+  
+  
+          dispatch(setEvent(eventsRes?.data?.events));
+          // Fetch venue details for each event
+          console.log('eventsData' , eventsData);
+          const eventsWithVenues = await Promise.all(
+            eventsData.map(async (event) => {
+              try {
+                const venueRes = await axios.get(`https://book-my-show-webapp-1.onrender.com/venue/${event.venueid}` , {withCredentials:true});
+                  console.log(venueRes);
+                return { ...event, venue: venueRes.data.venues[0] || null }; // Add venue data
+              } catch (error) {
+                console.error(`Error fetching venue for event ${event.eventid}:`, error);
+                return { ...event, venue: null }; // If venue fetch fails, set it as null
+              }
+            })
+          );
+  
+          setEvents(eventsWithVenues);
+        } catch (error) {
+          console.error("Error fetching events:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        // Fetch all events first
-        const eventsRes = await axios.get("https://book-my-show-webapp-1.onrender.com/getEvents", {
-            withCredentials: true,
-        });
-        if (!eventsRes.data.success) throw new Error("Failed to fetch events");
-
-        const eventsData: Event[] = eventsRes.data.events;
-
-
-        dispatch(setEvent(eventsRes?.data?.events));
-        // Fetch venue details for each event
-        console.log('eventsData' , eventsData);
-        const eventsWithVenues = await Promise.all(
-          eventsData.map(async (event) => {
-            try {
-              const venueRes = await axios.get(`https://book-my-show-webapp-1.onrender.com/venue/${event.venueid}` , {withCredentials:true});
-                console.log(venueRes);
-              return { ...event, venue: venueRes.data.venues[0] || null }; // Add venue data
-            } catch (error) {
-              console.error(`Error fetching venue for event ${event.eventid}:`, error);
-              return { ...event, venue: null }; // If venue fetch fails, set it as null
-            }
-          })
-        );
-
-        setEvents(eventsWithVenues);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchEvents();
   }, []);
 
@@ -95,7 +95,7 @@ const Test = () => {
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-card border rounded-lg shadow-lg p-6 w-full max-w-2xl">
             <h3 className="text-2xl font-bold text-foreground mb-6">Create New Event</h3>
-            <CreateEventForm onClose={() => setShowCreateForm(false)} />
+            <CreateEventForm onClose={() => setShowCreateForm(false)} refreshEvents={fetchEvents}/>
           </div>
         </div>
       )}
