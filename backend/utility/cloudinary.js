@@ -5,16 +5,17 @@ import dotenv from "dotenv";
 
 dotenv.config(); // Load environment variables
 
-// Configure Cloudinary
-cloudinary.v2.config({
+// Configure Cloudinary first
+const cloudinaryInstance = cloudinary.v2;
+cloudinaryInstance.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Setup multer storage with Cloudinary
+// Ensure Cloudinary is initialized before creating storage
 const storage = new CloudinaryStorage({
-    cloudinary: cloudinary.v2,
+    cloudinary: cloudinaryInstance, // Use the initialized Cloudinary instance
     params: {
         folder: "event_images", // Folder in Cloudinary
         allowed_formats: ["jpg", "png", "jpeg"],
@@ -24,4 +25,4 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-export { upload, cloudinary };
+export { upload, cloudinaryInstance as cloudinary };
