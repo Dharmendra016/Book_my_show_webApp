@@ -62,7 +62,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
       SeatsBooked: selectedSeats.length,
       TotalAmount: getTotalPrice(selectedSeats),
     };
-    const response = await axios.post('http://localhost:3000/bookingseat', bookingData);
+    const response = await axios.post('https://book-my-show-webapp-1.onrender.com/bookingseat', bookingData);
     console.log(response.data);
     setTimeout(() => {
       window.location.reload();
@@ -72,7 +72,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, userId }) => {
   const handleDelete = async () => {
     try {
       if (confirm('Are you sure you want to delete this event?')) {
-        await axios.get(`http://localhost:3000/deleteEvent/${event.eventid}`);
+        await axios.get(`https://book-my-show-webapp-1.onrender.com/deleteEvent/${event.eventid}`);
         // Reload the page after successful deletion
         window.location.reload();
       }

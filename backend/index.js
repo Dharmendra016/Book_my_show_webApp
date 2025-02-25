@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8000;
 
 const __dirname = path.resolve();
 app.use(cors({
-  origin: ["http://localhost:3000", "https://book-my-show-webapp.vercel.app"], // Allow localhost & deployed site
+  origin: ["http://localhost:3000","https://book-my-show-webapp-1.onrender.com", "https://book-my-show-webapp.vercel.app"], // Allow localhost & deployed site
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));

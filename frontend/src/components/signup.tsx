@@ -43,7 +43,7 @@ function Signup() {
         try {
             console.log(input);
 
-            const res = await axios.post('http://localhost:3000/signup', input, {
+            const res = await axios.post('https://book-my-show-webapp-1.onrender.com/signup', input, {
                 headers: {
                     'Content-Type':'application/json'
                 },
